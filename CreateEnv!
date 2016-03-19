@@ -29,29 +29,37 @@ WRK_DIR="wrk"
 WRK_PROFILE=".wrk_profile"
 TOOLS_TGZ="tools.tgz"
 
-TARGET_DIR="/home/xx"
+TARGET_ROOT="/home/xx"
 
-cd $TARGET_ROOT
-# if wrk directory does not exist restore it from repository
-if [ ! -d $WRK_DIR ] ; then
-    git clone $REPO
-    if [ $? -eq 0 ] ; then CreateWrkProfile; fi
-else 
-    echo "Folder $TARGET_ROOT/$WRK_DIR already exist."
-    exit 1
-fi
-
-function CreateWrkProfile ()
+# Generate wrk_env file
+function CrWrkProfile ()
 {
 tee $TARGET_ROOT/$WRK_DIR/$WRK_PROFILE << EOF
 export WRK="$TARGET_ROOT/$WRK_DIR"
 export TOOLS="$WRK/tools"
 export PATH="$WRK:$PATH"
 EOF
+
+#Start profile
+chmod +x $TARGET_ROOT/$WRK_DIR/$WRK_PROFILE
+. $TARGET_ROOT/$WRK_DIR/$WRK_PROFILE
 }
 
+
+
+
+cd $TARGET_ROOT
+# if wrk directory does not exist restore it from repository
+if [ ! -d $WRK_DIR ] ; then
+    git clone $REPO
+    if [ $? -eq 0 ] ; then CrWrkProfile ; fi
+else 
+    echo "Folder $TARGET_ROOT/$WRK_DIR already exist."
+    exit 1
+fi
+
 # restoring folder ./tools
-tar -zxvf $TOOLS_TGZ -C $TOOLS
+tar -zxvf $WRK/$TOOLS_TGZ -C $WRK
 
 
 
