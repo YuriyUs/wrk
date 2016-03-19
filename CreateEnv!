@@ -25,8 +25,9 @@ if [ $# -gt 0 ] ; then Usage ; exit 1 ; fi
 
 REPO="https://github.com/YuriyUs/wrk.git"
 #TARGET_ROOT="/usr/local"
-#WRK_DIR="wrk"
+WRK_DIR="wrk"
 WRK_PROFILE=".wrk_profile"
+TOOLS_TGZ="tools.tgz"
 
 TARGET_DIR="/home/xx"
 
@@ -48,4 +49,10 @@ export TOOLS="$WRK/tools"
 export PATH="$WRK:$PATH"
 EOF
 }
+
+# restoring folder ./tools
+tar -zxvf $TOOLS_TGZ -C $TOOLS
+
+
+
 
