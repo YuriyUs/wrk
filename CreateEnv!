@@ -1,0 +1,51 @@
+#!/bin/bash
+
+#    Note. For debugging used name .wrk_profile
+#
+# Author Yuriy Us. 3/15/16  Ver 1.0
+
+
+
+function Usage ()
+{
+cat << USG 
+----------------------------------------------------------------------------
+Script recreates environment from GitHub.com and generates .wrk_env profile.
+To activate the environment users have to add to their .profile following:
+. $WRK/.wrk_env or start bash $WRK/.wrk_env.
+
+Usage:
+	sudo CreateEnv!
+----------------------------------------------------------------------------
+USG
+}
+
+
+if [ $# -gt 0 ] ; then Usage ; exit 1 ; fi
+
+REPO="https://github.com/YuriyUs/wrk.git"
+#TARGET_ROOT="/usr/local"
+#WRK_DIR="wrk"
+WRK_PROFILE=".wrk_profile"
+
+TARGET_DIR="/home/xx"
+
+cd $TARGET_ROOT
+# if wrk directory does not exist restore it from repository
+if [ ! -d $WRK_DIR ] ; then
+    git clone $REPO
+    if [ $? -eq 0 ] ; then CreateWrkProfile; fi
+else 
+    echo "Folder $TARGET_ROOT/$WRK_DIR already exist."
+    exit 1
+fi
+
+function CreateWrkProfile ()
+{
+tee $TARGET_ROOT/$WRK_DIR/$WRK_PROFILE << EOF
+export WRK="$TARGET_ROOT/$WRK_DIR"
+export TOOLS="$WRK/tools"
+export PATH="$WRK:$PATH"
+EOF
+}
+
