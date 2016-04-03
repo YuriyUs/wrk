@@ -1,0 +1,72 @@
+#!/bin/bash
+
+
+#
+# Example of output for directory and file.
+# drwxr-xr-x	us	us	4096	03/13/16	22:59	--------------------------------  /home/us
+# -rw-rw-r--	us	us	0	03/13/16	23:02	d41d8cd98f00b204e9800998ecf8427e  /home/us/file.txt
+#
+#	Author: Yuriy Us. 3/13/2016  v.1.0
+#
+
+function Usage ()
+{
+cat << EOF
+-----------------------------------------------------------------------------
+Script is listing all entries starting from $ROOTDIR. For files it calculates
+MD5 checksum. For the rest types Md5sum is not calculated.
+Results presented in table similar to output of 'ls -la'. 
+Columns are separated by '\t'. Last two columns, which are 
+<MD5 checksum> and <File name> separated by space, because these 
+columns are coming from MD5sum command output.
+
+	Usage: sudo  Md5lst! [<root_dir>] [<out_file>]
+	where <root_dir> - Folder to start collection of information
+	      <out_file> - Name of output file
+	Note: In case of skipping parameters defaul values will be used.
+-----------------------------------------------------------------------------
+EOF
+echo Return code: $Ret
+echo 
+}
+ROOTDIR='/home'
+DIR_FILL='--------------------------------  '
+OUTPUT_FILE='/home/us/LIST'
+Ret=0
+
+# Checking parameters. When parameters are not passed - use default values.
+if [ $# -gt 0 ] ; then
+	# first parameter from cmd line is a root_dir
+	if [ -d $1 ] ; then
+		ROOTDIR=$1
+	else
+		echo Error: Directiry $1 does not exist
+		Ret=1
+		Usage
+		exit $Ret
+	fi
+	# Checking second parameter - the output file.
+	if [ -n "$2" ]; then
+		OUTPUT_FILE=$2
+	else
+		Echo "Output file was not specified.\n" \
+		"Using default name $OUTPUT_FILE."
+	fi
+fi
+echo  Building list of files with MD5sums
+echo  Root folder is ${ROOTDIR}
+echo  Output files:  ${OUTPUT_FILE} and ${OUTPUT_FILE}.err
+
+# removing previous output
+rm -f ${OUTPUT_FILE}*
+
+/usr/bin/time -p \
+find ${ROOTDIR} \( ! -type f -printf  "%M\t%g\t%u\t%s\t%AD\t%Ak:%AM\t${DIR_FILL}%p\n" \) , \
+	        \(   -type f -printf  "%M\t%g\t%u\t%s\t%AD\t%Ak:%AM\t"  -exec md5sum {} \;  \) \
+		>> ${OUTPUT_FILE} 2>> ${OUTPUT_FILE}.err
+
+RET_CODE=$?
+echo Return code = ${RET_CODE} | tee -a ${OUTPUT_FILE}.err
+if [ $RET_CODE -gt 0 ] ; then cat $OUTPUT_FILE.err ; fi
+
+exit ${RET_CODE}

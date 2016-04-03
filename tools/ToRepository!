@@ -1,0 +1,54 @@
+#!/bin/bash
+
+#
+# Author Yuriy Us. 3/29/2016. Version 1.0
+#
+
+function Usage ()
+{
+cat << EOF
+-----------------------------------------------------------------------------
+Script to place FILE in to repository.
+
+	Usage: ToRepository! <FileName> <Version>
+	Where
+		<FileName> - Name of Package
+		<Version>  - Version of Package
+	Note. In the repository Package kept under name <FileName>.<Version> 
+	      If FileNale include PATH
+	      PATH is ignored while placing into Repository
+-----------------------------------------------------------------------------
+EOF
+}
+
+
+if [ $# -lt 2 ] 
+then
+   Usage
+fi
+
+ftp_site="192.168.1.21" #localhost #myhostname
+username=repo        #myusername
+passwd=repo          #mypass
+
+Package=$(basename $1)^$2     # remove patch from name
+path="/wrk/"
+
+ftp -in <<FTPScript
+open $ftp_site
+user $username $passwd
+cd $path
+tick
+put $1 $Package
+close 
+bye
+FTPScript
+
+if [ $? -eq 0 ] 
+then
+    echo "$1 uploaded to $path$Package" 
+else
+    echo "$1 failed to upload"
+fi
+
+

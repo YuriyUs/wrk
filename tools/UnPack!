@@ -1,0 +1,41 @@
+#!/bin/bash
+
+
+#
+#  Author Yuriy Us. 3/16/16.     Ver 1.0
+
+function Usage ()
+{
+cat << EOF
+-----------------------------------------------------------------------------
+Script to restore whole directory from your package created by Pack!
+
+	Usage: UnPagk! <Target_Dir> <FileName>
+	Where 
+		<Target_Dir> - Target directory
+		<FileName> -   package file name
+	Note. Extention tgz will be added to your file name automaticaly
+-----------------------------------------------------------------------------
+EOF
+}
+
+if [ $# -lt 2 ] ; then 
+	echo Error: Script requires two parameters.
+	Usage
+	exit 1
+fi
+
+if [ ! -d $1 ] ; then
+	echo "Error: Directory $1 have to be created\n" \
+	     "       before running this iscript."
+	Usage
+	exit 1
+fi
+if [ -f $2.tgz ] ; then
+	tar -zxvf $2.tgz -C $1
+else 
+	echo Error: File $2.tgz cannot be found      
+	Usage
+	exit 1
+fi
+
