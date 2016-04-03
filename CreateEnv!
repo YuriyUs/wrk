@@ -59,7 +59,8 @@ else
 fi
 
 # restoring folder ./tools
-tar -zxvf $WRK/$TOOLS_TGZ -C $WRK
+#tar -zxvf $WRK/$TOOLS_TGZ -C $WRK
+chmod +x $TOOLS/*
 
 
 
