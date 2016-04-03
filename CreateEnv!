@@ -2,7 +2,7 @@
 
 #    Note. For debugging used name .wrk_profile
 #
-# Author Yuriy Us. 3/15/16  Ver 1.0
+# Author Yuriy Us. 3/15/16  Ver 2.0
 
 
 
@@ -24,20 +24,17 @@ USG
 if [ $# -gt 0 ] ; then Usage ; exit 1 ; fi
 
 REPO="https://github.com/YuriyUs/wrk.git"
-#TARGET_ROOT="/usr/local"
 WRK_DIR="wrk"
 WRK_PROFILE=".wrk_profile"
-TOOLS_TGZ="tools.tgz"
-
 TARGET_ROOT="/home/xx"
 
 # Generate wrk_env file
 function CrWrkProfile ()
 {
 tee $TARGET_ROOT/$WRK_DIR/$WRK_PROFILE << EOF
-export WRK="$TARGET_ROOT/$WRK_DIR"
-export TOOLS="$WRK/tools"
-export PATH="$WRK:$PATH"
+export WRK=$TARGET_ROOT/$WRK_DIR
+export TOOLS=\$WRK/tools
+export PATH=\$WRK:\$PATH
 EOF
 
 #Start profile
@@ -57,11 +54,4 @@ else
     echo "Folder $TARGET_ROOT/$WRK_DIR already exist."
     exit 1
 fi
-
-# restoring folder ./tools
-#tar -zxvf $WRK/$TOOLS_TGZ -C $WRK
-chmod +x $TOOLS/*
-
-
-
 
